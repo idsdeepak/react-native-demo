@@ -1,33 +1,58 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Tabs, useRouter } from 'expo-router';
+import { Block } from 'galio-framework';
+import { useEffect } from 'react';
+import { Image, TouchableOpacity } from 'react-native';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const user = await AsyncStorage.getItem('loggedInUser');
+      if (!user) router.replace('/login');
+    };
+    checkLogin();
+  }, []);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('loggedInUser');
+    router.replace('/login');
+  };
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
+        tabBarActiveTintColor: '#3897f0',
+        headerTitle: () => (
+          <Block row middle>
+            <Image
+              source={require('../../assets/images/CastCombeLandscapelogoDark.webp')}
+              style={{ width: 120, height: 40 }}
+              resizeMode="contain"
+            />
+          </Block>
+        ),
+        headerRight: () => (
+          <TouchableOpacity onPress={handleLogout} style={{ marginRight: 15 }}>
+            <FontAwesome name="sign-out" size={24} color="gray" />
+          </TouchableOpacity>
+        ),
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="home" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="settings/index"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <FontAwesome size={24} name="cog" color={color} />,
         }}
       />
     </Tabs>

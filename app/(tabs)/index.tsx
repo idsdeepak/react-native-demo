@@ -1,98 +1,132 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Block, Text, theme } from 'galio-framework';
+import React from 'react';
+import { Alert, Dimensions, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+const { width } = Dimensions.get('screen');
+const cardWidth = (width - theme.SIZES.BASE * 2 - theme.SIZES.BASE) / 2;
+const eventImage = require('../../assets/images/events-concept-on-black-background_219043-original.jpg');
 
-export default function HomeScreen() {
+const data = [
+  {
+    title: 'LZ WORLD TOUR',
+    subTitle: 'LZ World Tour, the home of the wildest drift events at Castle...',
+    image: eventImage,
+    horizontal: true
+  },
+  {
+    title: 'HALLOWEEN ACTION DAY',
+    subTitle: 'Halloween Action Day is the the spooky show season send-off',
+    image: eventImage,
+  },
+  {
+    title: 'CHRISTMAS MARKET',
+    subTitle: 'Step into the magic of the season at the Castle Combe Circuit...',
+    image: eventImage,
+  },
+  {
+    title: 'HALLOWEEN ACTION DAY',
+    subTitle: 'Halloween Action Day is the the spooky show season send-off',
+    image: eventImage,
+  },
+  {
+    title: 'CHRISTMAS MARKET',
+    subTitle: 'Step into the magic of the season at the Castle Combe Circuit...',
+    image: eventImage,
+  },
+
+];
+
+const Card = ({ item, horizontal, full, style }) => (
+  <Block style={[styles.card, horizontal && styles.horizontalCard, full && styles.fullCard, style]}>
+    <Image source={item.image} style={horizontal ? styles.horizontalImage : styles.cardImage} />
+    <Block style={styles.cardContent}>
+      <Block>
+        <Text style={styles.cardTitle}>{item.title}</Text>
+        <Text style={styles.cardSubTitle}>{item.subTitle}</Text>
+      </Block>
+      <TouchableOpacity onPress={() => Alert.alert('Coming Soon')}>
+        <Text style={styles.cardLink}>View Event</Text>
+      </TouchableOpacity>
+    </Block>
+  </Block>
+);
+
+export default function HomeTab() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
-
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <Block flex center style={styles.home}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles}>
+        <Text h5 style={styles.eventTitle}><FontAwesome name="circle" size={18} color="#0080c9" /> LIVE EVENTS</Text>
+        <Block flex>
+          <Card item={data[0]} horizontal />
+          <Card item={data[0]} horizontal />
+          <Text h5 style={styles.eventTitle}><FontAwesome name="calendar" size={18} color="#0080c9" /> NEXT UPCOMMING EVENTS</Text>
+          <Block flex row>
+            <Card item={data[1]} style={{ marginRight: theme.SIZES.BASE, width: cardWidth }} />
+            <Card item={data[2]} style={{ width: cardWidth }} />
+          </Block>
+          <Text h5 style={styles.eventTitle}><FontAwesome name="list" size={18} color="#0080c9" /> OTHER EVENTS</Text>
+          <Card item={data[3]} horizontal />
+          <Card item={data[4]} full />
+        </Block>
+      </ScrollView>
+    </Block>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  home: {
+    width: width,
+  },
+  articles: {
+    width: width - theme.SIZES.BASE * 2,
+    paddingVertical: theme.SIZES.BASE,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginBottom: theme.SIZES.BASE,
+  },
+  horizontalCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    height: 120,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  fullCard: {
+    width: '100%',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  cardImage: {
+    width: '100%',
+    height: 150,
   },
+  horizontalImage: {
+    width: 120,
+    height: '100%',
+  },
+  cardContent: {
+    flex: 1,
+    padding: theme.SIZES.BASE,
+    justifyContent: 'space-between'
+  },
+  cardTitle: {
+    fontSize: 12,
+    color: '#333',
+    fontWeight: 'bold'
+  },
+  cardSubTitle: {
+    fontSize: 11,
+    color: '#333',
+    marginTop: 2
+  },
+  cardLink: {
+    color: '#0080c9',
+    fontSize: 12,
+    marginTop: 5,
+  },
+  eventTitle: {
+    paddingTop: 5,
+    paddingBottom: 20,
+    fontWeight: '600',
+    fontSize: 18
+  }
 });
